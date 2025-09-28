@@ -26,3 +26,11 @@ This project showcases the complete squad, match statistics, season schedules, n
 ---
 
 ## 📂 Project Structure
+┣ 📜 index.html # Home page
+┣ 📜 team.html # Team squad page
+┣ 📜 stats.html # Stats & charts page
+┣ 📜 schedule.html # IPL schedules & results
+┣ 📜 news.html # Latest news section
+┣ 📜 style.css # Global styling
+┣ 📜 players.json # Player details
+
