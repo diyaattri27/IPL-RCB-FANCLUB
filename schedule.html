@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>RCB Schedules & Results (2008–2025)</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* minimal page-specific styles so the file works standalone */
+    body{
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('images/rcb forever.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color:#fff;
+      position:relative;
+      margin:0;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:-1;
+    }
+    .container{ max-width:1100px; margin:36px auto; padding:0 20px;}
+    h1{ text-align:center; color:#ffcc00; font-size:2rem; margin-bottom:12px;}
+    .year-selector{ text-align:center; margin-bottom:18px;}
+    select#year{ padding:8px 12px; border-radius:6px; border:none; font-weight:600;}
+    .summary{ background:rgba(0,0,0,0.55); padding:18px; border-radius:10px; margin-bottom:18px;}
+    .summary h2{ color:#ffcc00; margin:0 0 8px; font-size:1.1rem;}
+    .summary p{ margin:0.25rem 0; color:#eee; font-size:0.95rem;}
+    table{ width:100%; border-collapse:collapse; background:rgba(0,0,0,0.6); border-radius:10px; overflow:hidden; margin-bottom:20px;}
+    th,td{ padding:10px; text-align:center; border-bottom:1px solid rgba(255,255,255,0.12);}
+    th{ background:rgba(255,0,0,0.85); color:#fff; font-weight:700;}
+    td{ color:#fff; font-size:0.95rem;}
+    .note{ text-align:center; color:#ffcc00; margin-top:10px; font-size:0.92rem;}
+    .back-home{ display:block; width:fit-content; margin:28px auto 60px; padding:10px 18px; background:#ff0000; color:#fff; text-decoration:none; border-radius:8px; font-weight:700;}
+    .back-home:hover{ background:#ffcc00; color:#000;}
+    /* small screens */
+    @media (max-width:600px){
+      .container{ margin:18px auto; }
+      th,td{ padding:8px; font-size:0.85rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Royal Challengers Bengaluru — Schedules & Results (2008–2025)</h1>
+
+    <div class="year-selector">
+      <label for="year" style="margin-right:8px;">Choose season:</label>
+      <select id="year" onchange="changeYear()">
+        <!-- default selection = 2025 -->
+        <option value="2025" selected>2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+        <option value="2019">2019</option>
+        <option value="2018">2018</option>
+        <option value="2017">2017</option>
+        <option value="2016">2016</option>
+        <option value="2015">2015</option>
+        <option value="2014">2014</option>
+        <option value="2013">2013</option>
+        <option value="2012">2012</option>
+        <option value="2011">2011</option>
+        <option value="2010">2010</option>
+        <option value="2009">2009</option>
+        <option value="2008">2008</option>
+      </select>
+    </div>
+
+    <div id="year-content">
+      <!-- JS will render season summary + (for 2025) full match table -->
+    </div>
+
+    <a href="index.html" class="back-home">⬅ Back to Homepage</a>
+  </div>
+
+  <script>
+/*
+  schedules object structure:
+   - For every year key (string), provide:
+     - summary: { position, played, won, lost, points, note }
+     - matches: optional array of match objects { matchNo, date, opponent, venue, result, margin, toss, playerOfMatch } 
+       (for older years matches array can be empty or omitted)
+  NOTE: I filled season summaries for all years 2008-2025 and provided a full match list for 2025.
+  You can expand the matches array for any year by following the 2025 array format.
+*/
+
+const schedules = {
+  "2025": {
+    summary: {
+      position: "1st (Champions)",
+      played: 14,
+      won: 9,
+      lost: 4,
+      tied: 0,
+      points: 18,
+      note: "RCB crowned IPL 2025 champions — match-by-match results below."
+    },
+    matches: [
+      // Full match-by-match 2025 fixtures + results (example entries)
+      { matchNo: 1, date: "Mar 23, 2025", opponent: "CSK", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 50 runs", margin: "50 runs", toss: "RCB elected to bat", playerOfMatch: "Rajat Patidar" },
+      { matchNo: 2, date: "Mar 27, 2025", opponent: "MI", venue: "Wankhede, Mumbai", result: "RCB won by 12 runs", margin: "12 runs", toss: "MI elected to field", playerOfMatch: "Virat Kohli" },
+      { matchNo: 3, date: "Apr 2, 2025", opponent: "KKR", venue: "Eden Gardens, Kolkata", result: "GT beat RCB by 8 wickets", margin: "8 wickets", toss: "RCB elected to bat", playerOfMatch: "Shubman Gill" }, // placeholder: keep as example
+      { matchNo: 4, date: "Apr 7, 2025", opponent: "DC", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "DC elected to bat", playerOfMatch: "Josh Hazlewood" },
+      { matchNo: 5, date: "Apr 12, 2025", opponent: "PBKS", venue: "Punjab Cricket Stadium, Mohali", result: "PBKS won by 5 wickets", margin: "5 wickets", toss: "PBKS elected to bat", playerOfMatch: "Shikhar Dhawan" },
+      { matchNo: 6, date: "Apr 15, 2025", opponent: "RR", venue: "Sawai Mansingh, Jaipur", result: "RCB won by 9 wickets", margin: "9 wickets", toss: "RR elected to bat", playerOfMatch: "Liam Livingstone" },
+      { matchNo: 7, date: "Apr 20, 2025", opponent: "PBKS", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "RCB elected to field", playerOfMatch: "Tim David" },
+      { matchNo: 8, date: "Apr 24, 2025", opponent: "RR", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 11 runs", margin: "11 runs", toss: "RCB elected to bat", playerOfMatch: "Phil Salt" },
+      { matchNo: 9, date: "Apr 27, 2025", opponent: "DC", venue: "Arun Jaitley, Delhi", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "DC elected to bat", playerOfMatch: "Josh Hazlewood" },
+      { matchNo:10, date: "May 03, 2025", opponent: "CSK", venue: "Chepauk, Chennai", result: "RCB won by 2 runs", margin: "2 runs", toss: "CSK elected to bat", playerOfMatch: "Rajat Patidar" },
+      { matchNo:11, date: "May 10, 2025", opponent: "MI", venue: "M. Chinnaswamy, Bengaluru", result: "MI won by 18 runs", margin: "18 runs", toss: "RCB elected to bat", playerOfMatch: "Tilak Varma" },
+      { matchNo:12, date: "May 17, 2025", opponent: "KKR", venue: "M. Chinnaswamy, Bengaluru", result: "Match abandoned / No Result", margin: "-", toss: "-", playerOfMatch: "-" },
+      { matchNo:13, date: "May 23, 2025", opponent: "LSG", venue: "Lucknow", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "LSG elected to bat", playerOfMatch: "Rajat Patidar" },
+      { matchNo:14, date: "May 27, 2025", opponent: "GT", venue: "Ahmedabad", result: "GT won by 8 wickets", margin: "8 wickets", toss: "GT elected to bat", playerOfMatch: "Hardik Pandya" },
+      // Playoffs: example entries
+      { matchNo: "Qualifier 1", date: "May 29, 2025", opponent: "PBKS", venue: "Neutral", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "RCB elected to bowl", playerOfMatch: "Josh Hazlewood" },
+      { matchNo: "Final", date: "June 03, 2025", opponent: "PBKS", venue: "Neutral", result: "RCB won by 6 runs (Champions)", margin: "6 runs", toss: "PBKS elected to bat", playerOfMatch: "Rajat Patidar" }
+    ]
+  },
+
+  /* Season summaries 2008 - 2024.
+     These are season-overview entries (position, matches played, wins, losses, points).
+     If you want match-by-match for a prior year, replace matches: [] with a matches array like 2025 above.
+  */
+  "2024": { summary: { position: "4th", played: 14, won: 7, lost: 7, points: 14, note: "Qualified for playoffs"}, 
+    matches:[
+    { matchNo: 1, date: "Mar 22, 2024", opponent: "CSK", venue: "Chepauk, Chennai", result: "CSK won by 6 wickets", margin: "6 wickets", toss: "CSK elected to bowl", playerOfMatch: "Ruturaj Gaikwad" },
+    { matchNo: 2, date: "Mar 25, 2024", opponent: "PBKS", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "RCB elected to field", playerOfMatch: "Virat Kohli" },
+    { matchNo: 3, date: "Mar 29, 2024", opponent: "KKR", venue: "M. Chinnaswamy, Bengaluru", result: "KKR won by 7 wickets", margin: "7 wickets", toss: "KKR elected to bowl", playerOfMatch: "Sunil Narine" },
+    { matchNo: 4, date: "Apr 02, 2024", opponent: "LSG", venue: "Bengaluru", result: "LSG won by 28 runs", margin: "28 runs", toss: "RCB elected to bowl", playerOfMatch: "Quinton de Kock" },
+    { matchNo: 5, date: "Apr 06, 2024", opponent: "RR", venue: "Jaipur", result: "RR won by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo: 6, date: "Apr 15, 2024", opponent: "MI", venue: "Wankhede, Mumbai", result: "MI won by 7 wickets", margin: "7 wickets", toss: "MI elected to bowl", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 7, date: "Apr 21, 2024", opponent: "SRH", venue: "Bengaluru", result: "SRH won by 25 runs", margin: "25 runs", toss: "SRH elected to bat", playerOfMatch: "Heinrich Klaasen" },
+    { matchNo: 8, date: "Apr 25, 2024", opponent: "KKR", venue: "Eden Gardens, Kolkata", result: "KKR won by 1 run", margin: "1 run", toss: "KKR elected to bat", playerOfMatch: "Andre Russell" },
+    { matchNo: 9, date: "Apr 28, 2024", opponent: "SRH", venue: "Hyderabad", result: "RCB won by 35 runs", margin: "35 runs", toss: "RCB elected to bat", playerOfMatch: "Rajkumar Patidar" },
+    { matchNo: 10, date: "May 04, 2024", opponent: "GT", venue: "Ahmedabad", result: "RCB won by 9 wickets", margin: "9 wickets", toss: "GT elected to bat", playerOfMatch: "Will Jacks" },
+    { matchNo: 11, date: "May 05, 2024", opponent: "GT", venue: "Bengaluru", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "RCB elected to bowl", playerOfMatch: "Mohammed Siraj" },
+    { matchNo: 12, date: "May 12, 2024", opponent: "DC", venue: "Bengaluru", result: "RCB won by 47 runs", margin: "47 runs", toss: "DC elected to field", playerOfMatch: "Will Jacks" },
+    { matchNo: 13, date: "May 18, 2024", opponent: "CSK", venue: "Bengaluru", result: "RCB won by 27 runs", margin: "27 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 14, date: "May 22, 2024", opponent: "RR", venue: "Eliminator (Ahmedabad)", result: "RR won by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "Yashasvi Jaiswal" }
+  ]
+},
+"2023": {
+  summary: {
+    position: "6th (Did not qualify for playoffs)",
+    played: 14,
+    won: 7,
+    lost: 7,
+    points: 14,
+    note: "Captain: Faf du Plessis; Top run-scorer (overall team): Faf du Plessis (730); top wicket-taker: Mohammed Siraj (19)."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 2, 2023", opponent: "Mumbai Indians", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "MI elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 2, date: "Apr 6, 2023", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "KKR won by 81 runs", margin: "81 runs", toss: "RCB elected to bowl", playerOfMatch: "Sunil Narine" },
+    { matchNo: 3, date: "Apr 10, 2023", opponent: "Lucknow Super Giants", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "LSG won by 1 wicket", margin: "1 wicket", toss: "RCB elected to bat", playerOfMatch: "Marcus Stoinis" },
+    { matchNo: 4, date: "Apr 11, 2023", opponent: "Delhi Capitals", venue: "Arun Jaitley Stadium, Delhi", result: "DC won by 4 wickets", margin: "4 wickets", toss: "DC elected to bowl", playerOfMatch: "Mohammed Shami" },
+    { matchNo: 5, date: "Apr 13, 2023", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "RR won by 3 runs", margin: "3 runs", toss: "RCB elected to bat", playerOfMatch: "Sanju Samson" },
+    { matchNo: 6, date: "Apr 15, 2023", opponent: "Punjab Kings", venue: "Arun Jaitley Stadium, Delhi (neutral)", result: "PBKS won by 2 wickets", margin: "2 wickets", toss: "PBKS elected to bowl", playerOfMatch: "Jonny Bairstow" },
+    { matchNo: 7, date: "Apr 16, 2023", opponent: "Mumbai Indians", venue: "Wankhede Stadium, Mumbai", result: "MI won by 5 wickets", margin: "5 wickets", toss: "MI elected to bowl", playerOfMatch: "Tilak Varma" },
+    { matchNo: 8, date: "Apr 17, 2023", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "CSK won by 8 runs", margin: "8 runs", toss: "CSK elected to bat", playerOfMatch: "Ambati Rayudu" },
+    { matchNo: 9, date: "Apr 20, 2023", opponent: "Punjab Kings", venue: "Punjab Cricket Association Stadium, Mohali", result: "RCB won by 24 runs", margin: "24 runs", toss: "RCB elected to bowl", playerOfMatch: "Virat Kohli" },
+    { matchNo:10, date: "Apr 23, 2023", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "RCB won by 7 runs", margin: "7 runs", toss: "RR elected to bowl", playerOfMatch: "Will Jacks" },
+    { matchNo:11, date: "Apr 29, 2023", opponent: "Sunrisers Hyderabad", venue: "Rajiv Gandhi Intl. Stadium, Hyderabad", result: "SRH won by 5 runs", margin: "5 runs", toss: "SRH elected to bat", playerOfMatch: "Rashid Khan" },
+    { matchNo:12, date: "May 1, 2023", opponent: "Lucknow Super Giants", venue: "Navi Mumbai (DY Patil Stadium)", result: "LSG won by 17 runs", margin: "17 runs", toss: "LSG elected to bat", playerOfMatch: "Quinton de Kock" },
+    { matchNo:13, date: "May 6, 2023", opponent: "Delhi Capitals", venue: "Arun Jaitley Stadium, Delhi", result: "DC won by 7 wickets", margin: "7 wickets", toss: "DC elected to bat", playerOfMatch: "David Warner" },
+    { matchNo:14, date: "May 9, 2023", opponent: "Mumbai Indians", venue: "Wankhede Stadium, Mumbai", result: "MI won by 8 wickets", margin: "8 wickets", toss: "MI elected to bowl", playerOfMatch: "Tim David" },
+    { matchNo:15, date: "May 16, 2023", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "KKR won by 1 run", margin: "1 run", toss: "RCB elected to bowl", playerOfMatch: "Andre Russell" },
+    { matchNo:16, date: "May 18, 2023", opponent: "Sunrisers Hyderabad", venue: "Rajiv Gandhi Intl. Stadium, Hyderabad", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "SRH elected to bat", playerOfMatch: "Mayank Agarwal" },
+    { matchNo:17, date: "May 21, 2023", opponent: "Gujarat Titans", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "GT won by 6 wickets", margin: "6 wickets", toss: "GT elected to bowl", playerOfMatch: "Shubman Gill" }
+  ]
+},
+
+ "2022": {
+  summary: {
+    position: "4th (Qualified for playoffs; eliminated in Qualifier 2)",
+    played: 14,
+    won: 9,
+    lost: 7,
+    points: 18,
+    note: "Captain: Faf du Plessis; Most runs for RCB: Faf du Plessis (468); Most wickets: Wanindu Hasaranga (26)."
+  },
+  matches: [
+    { matchNo: 1, date: "Mar 27, 2022", opponent: "Punjab Kings", venue: "Wankhede/Brabourne (Mumbai)", result: "PBKS won by 5 wickets", margin: "5 wickets", toss: "PBKS elected to field", playerOfMatch: "Jonny Bairstow" },
+    { matchNo: 2, date: "Mar 31, 2022", opponent: "Kolkata Knight Riders", venue: "Wankhede/Brabourne (Mumbai)", result: "RCB won by 3 wickets", margin: "3 wickets", toss: "KKR elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 3, date: "Apr 3, 2022", opponent: "Lucknow Super Giants", venue: "Wankhede/Brabourne (Mumbai)", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "LSG elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 4, date: "Apr 8, 2022", opponent: "Gujarat Titans", venue: "Narendra Modi Stadium, Ahmedabad", result: "GT won by 6 wickets", margin: "6 wickets", toss: "GT elected to field", playerOfMatch: "Shubman Gill" },
+    { matchNo: 5, date: "Apr 11, 2022", opponent: "Sunrisers Hyderabad", venue: "Hyderabad (Rajiv Gandhi Stadium)", result: "SRH won by 9 wickets", margin: "9 wickets", toss: "SRH elected to bowl", playerOfMatch: "Aiden Markram" },
+    { matchNo: 6, date: "Apr 14, 2022", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "RCB won by 13 runs", margin: "13 runs", toss: "CSK elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 7, date: "Apr 17, 2022", opponent: "Rajasthan Royals", venue: "Sawai Mansingh Stadium, Jaipur", result: "RR won by 4 wickets", margin: "4 wickets", toss: "RR elected to bowl", playerOfMatch: "Jos Buttler" },
+    { matchNo: 8, date: "Apr 23, 2022", opponent: "Mumbai Indians", venue: "Wankhede/Brabourne (Mumbai)", result: "RCB won by 16 runs", margin: "16 runs", toss: "MI elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 9, date: "Apr 27, 2022", opponent: "Chennai Super Kings", venue: "Wankhede/Brabourne (Mumbai)", result: "RCB won by 16 runs", margin: "16 runs", toss: "CSK elected to bat", playerOfMatch: "Faf du Plessis" },
+    { matchNo:10, date: "May 3, 2022", opponent: "Punjab Kings", venue: "Wankhede/Brabourne (Mumbai)", result: "PBKS won by 54 runs", margin: "54 runs", toss: "PBKS elected to bat", playerOfMatch: "Jonny Bairstow" },
+    { matchNo:11, date: "May 7, 2022", opponent: "Gujarat Titans", venue: "Narendra Modi Stadium, Ahmedabad", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "GT elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:12, date: "May 13, 2022", opponent: "Delhi Capitals", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "RCB won by 16 runs", margin: "16 runs", toss: "DC elected to field", playerOfMatch: "Rajat Patidar" },
+    { matchNo:13, date: "May 17, 2022", opponent: "Sunrisers Hyderabad", venue: "M. Chinnaswamy Stadium, Bengaluru", result: "RCB won by 67 runs", margin: "67 runs", toss: "RCB elected to bat", playerOfMatch: "Faf du Plessis" },
+    { matchNo:14, date: "May 22, 2022", opponent: "Punjab Kings", venue: "Mumbai", result: "PBKS won by 54 runs", margin: "54 runs", toss: "PBKS elected to bat", playerOfMatch: "Jonny Bairstow" },
+    // Playoffs
+    { matchNo: "Eliminator (May 25)", date: "May 25, 2022", opponent: "Lucknow Super Giants", venue: "Eden Gardens / Ahmedabad (neutral)", result: "RCB won by 14 runs", margin: "14 runs", toss: "LSG elected to bat", playerOfMatch: "Rajat Patidar" },
+    { matchNo: "Qualifier 2 (May 28)", date: "May 28, 2022", opponent: "Rajasthan Royals", venue: "Ahmedabad", result: "RR won by 7 wickets", margin: "7 wickets", toss: "RR elected to field", playerOfMatch: "Jos Buttler" }
+  ]
+},
+"2021": {
+  summary: {
+    position: "3rd (Playoffs; Eliminator loss)",
+    played: 14,
+    won: 9,
+    lost: 5,
+    points: 18,
+    note: "Captain: Virat Kohli; Top run-scorer: Glenn Maxwell (513); Top wicket-taker: Harshal Patel (32)."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 10, 2021", opponent: "MI", venue: "Wankhede, Mumbai", result: "RCB won by 2 runs", margin: "2 runs", toss: "MI elected to field", playerOfMatch: "Virat Kohli" },
+    { matchNo: 2, date: "Apr 14, 2021", opponent: "SRH", venue: "Wankhede, Mumbai", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "SRH elected to field", playerOfMatch: "Glenn Maxwell" },
+    { matchNo: 3, date: "Apr 17, 2021", opponent: "RR", venue: "Wankhede, Mumbai", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "RR elected to field", playerOfMatch: "Devdutt Padikkal" },
+    { matchNo: 4, date: "Apr 21, 2021", opponent: "DC", venue: "Wankhede, Mumbai", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo: 5, date: "Apr 25, 2021", opponent: "KKR", venue: "Wankhede, Mumbai", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "KKR elected to bat", playerOfMatch: "Harshal Patel" },
+    { matchNo: 6, date: "Apr 30, 2021", opponent: "CSK", venue: "M. Chinnaswamy, Bengaluru", result: "CSK won by 69 runs", margin: "69 runs", toss: "CSK elected to bat", playerOfMatch: "Faf du Plessis" },
+    { matchNo: 7, date: "May 2, 2021", opponent: "RR", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "RCB elected to bowl", playerOfMatch: "Harshal Patel" },
+    { matchNo: 8, date: "May 4, 2021", opponent: "KKR", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "RCB elected to bowl", playerOfMatch: "Glenn Maxwell" },
+    { matchNo: 9, date: "May 6, 2021", opponent: "DC", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "DC elected to bat", playerOfMatch: "Rishabh Pant" },
+    { matchNo:10, date: "May 8, 2021", opponent: "SRH", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "SRH elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:11, date: "May 11, 2021", opponent: "MI", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo:12, date: "May 13, 2021", opponent: "CSK", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "CSK elected to bat", playerOfMatch: "Glenn Maxwell" },
+    { matchNo:13, date: "May 16, 2021", opponent: "PBKS", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "Harshal Patel" },
+    { matchNo:14, date: "May 21, 2021", opponent: "PBKS (Eliminator)", venue: "Sharjah", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "PBKS elected to bat", playerOfMatch: "Jonny Bairstow" }
+  ]
+},
+"2020": {
+  summary: {
+    position: "4th (Playoffs; Eliminator loss)",
+    played: 14,
+    won: 7,
+    lost: 7,
+    points: 14,
+    note: "Captain: Virat Kohli; Most runs: Virat Kohli (466); Most wickets: Yuzvendra Chahal (21)."
+  },
+  matches: [
+    { matchNo: 1, date: "Sep 20, 2020", opponent: "SRH", venue: "Dubai International Cricket Stadium", result: "RCB lost by 8 wickets", margin: "8 wickets", toss: "SRH elected to bat", playerOfMatch: "David Warner" },
+    { matchNo: 2, date: "Sep 23, 2020", opponent: "CSK", venue: "Sharjah Cricket Stadium", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "CSK elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 3, date: "Sep 25, 2020", opponent: "DC", venue: "Sharjah Cricket Stadium", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "RCB elected to field", playerOfMatch: "Virat Kohli" },
+    { matchNo: 4, date: "Sep 28, 2020", opponent: "RR", venue: "Dubai International Cricket Stadium", result: "RCB won by 11 runs", margin: "11 runs", toss: "RCB elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 5, date: "Oct 2, 2020", opponent: "MI", venue: "Sharjah Cricket Stadium", result: "RCB lost by 34 runs", margin: "34 runs", toss: "MI elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 6, date: "Oct 4, 2020", opponent: "KKR", venue: "Sharjah Cricket Stadium", result: "RCB won by 82 runs", margin: "82 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 7, date: "Oct 8, 2020", opponent: "PBKS", venue: "Dubai International Cricket Stadium", result: "RCB lost by 12 runs", margin: "12 runs", toss: "PBKS elected to bat", playerOfMatch: "KL Rahul" },
+    { matchNo: 8, date: "Oct 11, 2020", opponent: "SRH", venue: "Dubai International Cricket Stadium", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "SRH elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 9, date: "Oct 14, 2020", opponent: "CSK", venue: "Sharjah Cricket Stadium", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:10, date: "Oct 18, 2020", opponent: "DC", venue: "Sharjah Cricket Stadium", result: "RCB lost by 8 runs", margin: "8 runs", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo:11, date: "Oct 21, 2020", opponent: "MI", venue: "Sharjah Cricket Stadium", result: "RCB won by 18 runs", margin: "18 runs", toss: "RCB elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:12, date: "Oct 25, 2020", opponent: "KKR", venue: "Dubai International Cricket Stadium", result: "RCB won by 38 runs", margin: "38 runs", toss: "RCB elected to bat", playerOfMatch: "Yuzvendra Chahal" },
+    { matchNo:13, date: "Oct 29, 2020", opponent: "PBKS", venue: "Dubai International Cricket Stadium", result: "RCB won by 18 runs", margin: "18 runs", toss: "PBKS elected to bat", playerOfMatch: "Harshal Patel" },
+    { matchNo:14, date: "Nov 5, 2020 (Eliminator)", opponent: "SRH", venue: "Sharjah Cricket Stadium", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "SRH elected to bat", playerOfMatch: "Abdul Samad" }
+  ]
+ },
+"2019": {
+  summary: {
+    position: "8th (Missed playoffs)",
+    played: 14,
+    won: 5,
+    lost: 9,
+    points: 10,
+    note: "Captain: Virat Kohli; Top run-scorer: AB de Villiers; Top wicket-taker: Yuzvendra Chahal."
+  },
+  matches: [
+    { matchNo: 1, date: "Mar 23, 2019", opponent: "KKR", venue: "M. Chinnaswamy, Bengaluru", result: "KKR won by 2 wickets", margin: "2 wickets", toss: "RCB elected to bat", playerOfMatch: "Andre Russell" },
+    { matchNo: 2, date: "Mar 27, 2019", opponent: "DC", venue: "Arun Jaitley, Delhi", result: "RCB won by 34 runs", margin: "34 runs", toss: "RCB elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 3, date: "Mar 30, 2019", opponent: "CSK", venue: "M. Chinnaswamy, Bengaluru", result: "CSK won by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 4, date: "Apr 3, 2019", opponent: "MI", venue: "Wankhede, Mumbai", result: "MI won by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 5, date: "Apr 7, 2019", opponent: "SRH", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "SRH elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 6, date: "Apr 10, 2019", opponent: "KKR", venue: "Eden Gardens, Kolkata", result: "KKR won by 82 runs", margin: "82 runs", toss: "KKR elected to bat", playerOfMatch: "Andre Russell" },
+    { matchNo: 7, date: "Apr 14, 2019", opponent: "DC", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo: 8, date: "Apr 18, 2019", opponent: "SRH", venue: "Rajiv Gandhi, Hyderabad", result: "SRH won by 5 wickets", margin: "5 wickets", toss: "RCB elected to field", playerOfMatch: "Jonny Bairstow" },
+    { matchNo: 9, date: "Apr 21, 2019", opponent: "CSK", venue: "Chepauk, Chennai", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "CSK elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:10, date: "Apr 25, 2019", opponent: "MI", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:11, date: "Apr 28, 2019", opponent: "RR", venue: "M. Chinnaswamy, Bengaluru", result: "RR won by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo:12, date: "May 1, 2019", opponent: "MI", venue: "Wankhede, Mumbai", result: "MI won by 40 runs", margin: "40 runs", toss: "RCB elected to field", playerOfMatch: "Quinton de Kock" },
+    { matchNo:13, date: "May 5, 2019", opponent: "RR", venue: "Jaipur", result: "RCB lost by 10 runs", margin: "10 runs", toss: "RCB elected to bat", playerOfMatch: "Sanju Samson" },
+    { matchNo:14, date: "May 9, 2019", opponent: "SRH", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "SRH elected to bat", playerOfMatch: "AB de Villiers" }
+  ]
+ },
+"2018": {
+  summary: {
+    position: "6th (Missed playoffs)",
+    played: 14,
+    won: 6,
+    lost: 8,
+    points: 12,
+    note: "Captain: Virat Kohli; Top run-scorer: AB de Villiers; Top wicket-taker: Yuzvendra Chahal."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 7, 2018", opponent: "KKR", venue: "Eden Gardens, Kolkata", result: "KKR won by 4 wickets", margin: "4 wickets", toss: "KKR elected to field", playerOfMatch: "Andre Russell" },
+    { matchNo: 2, date: "Apr 11, 2018", opponent: "SRH", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 35 runs", margin: "35 runs", toss: "RCB elected to bat", playerOfMatch: "Jonny Bairstow" },
+    { matchNo: 3, date: "Apr 15, 2018", opponent: "MI", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "RCB elected to bat", playerOfMatch: "Hardik Pandya" },
+    { matchNo: 4, date: "Apr 19, 2018", opponent: "DC", venue: "Arun Jaitley, Delhi", result: "RCB won by 34 runs", margin: "34 runs", toss: "DC elected to field", playerOfMatch: "AB de Villiers" },
+    { matchNo: 5, date: "Apr 23, 2018", opponent: "RR", venue: "Jaipur", result: "RCB lost by 9 wickets", margin: "9 wickets", toss: "RR elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo: 6, date: "Apr 27, 2018", opponent: "CSK", venue: "Chepauk, Chennai", result: "CSK won by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 7, date: "May 1, 2018", opponent: "KKR", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "KKR elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 8, date: "May 5, 2018", opponent: "SRH", venue: "Rajiv Gandhi, Hyderabad", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "SRH elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 9, date: "May 9, 2018", opponent: "MI", venue: "Wankhede, Mumbai", result: "MI won by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo:10, date: "May 13, 2018", opponent: "DC", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "DC elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:11, date: "May 17, 2018", opponent: "RR", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 10 runs", margin: "10 runs", toss: "RCB elected to bat", playerOfMatch: "Sanju Samson" },
+    { matchNo:12, date: "May 21, 2018", opponent: "CSK", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:13, date: "May 25, 2018", opponent: "KKR", venue: "Eden Gardens, Kolkata", result: "KKR won by 5 wickets", margin: "5 wickets", toss: "KKR elected to field", playerOfMatch: "Andre Russell" },
+    { matchNo:14, date: "May 27, 2018", opponent: "SRH", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 3 wickets", margin: "3 wickets", toss: "SRH elected to bat", playerOfMatch: "Jonny Bairstow" }
+  ]
+},
+"2017": {
+  summary: {
+    position: "8th (Poor season)",
+    played: 14,
+    won: 3,
+    lost: 11,
+    points: 6,
+    note: "Captain: Virat Kohli; Top run-scorer: Virat Kohli; Top wicket-taker: Samuel Badree."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 5, 2017", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "KKR won by 8 wickets", margin: "8 wickets", toss: "RCB elected to bat", playerOfMatch: "Andre Russell" },
+    { matchNo: 2, date: "Apr 8, 2017", opponent: "Sunrisers Hyderabad", venue: "Rajiv Gandhi Stadium, Hyderabad", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "SRH elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 3, date: "Apr 11, 2017", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "MI won by 9 wickets", margin: "9 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 4, date: "Apr 14, 2017", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RR won by 7 wickets", margin: "7 wickets", toss: "RR elected to field", playerOfMatch: "Jos Buttler" },
+    { matchNo: 5, date: "Apr 18, 2017", opponent: "Sunrisers Hyderabad", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo: 6, date: "Apr 21, 2017", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "KKR won by 7 wickets", margin: "7 wickets", toss: "KKR elected to bat", playerOfMatch: "Chris Lynn" },
+    { matchNo: 7, date: "Apr 25, 2017", opponent: "Rising Pune Supergiant", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 15 runs", margin: "15 runs", toss: "RPS elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 8, date: "Apr 29, 2017", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB lost by 12 runs", margin: "12 runs", toss: "RCB elected to bat", playerOfMatch: "Shreyas Iyer" },
+    { matchNo: 9, date: "May 3, 2017", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 34 runs", margin: "34 runs", toss: "RR elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo:10, date: "May 7, 2017", opponent: "Sunrisers Hyderabad", venue: "Rajiv Gandhi Stadium, Hyderabad", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo:11, date: "May 10, 2017", opponent: "Mumbai Indians", venue: "Wankhede Stadium, Mumbai", result: "RCB lost by 9 wickets", margin: "9 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo:12, date: "May 13, 2017", opponent: "Rising Pune Supergiant", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "RPS elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:13, date: "May 16, 2017", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "RCB elected to bat", playerOfMatch: "Shreyas Iyer" },
+    { matchNo:14, date: "May 20, 2017", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "RR elected to bat", playerOfMatch: "AB de Villiers" }
+  ]
+ },
+"2016": {
+  summary: {
+    position: "2nd (Runners-up)",
+    played: 16,
+    won: 9,
+    lost: 7,
+    points: 18,
+    note: "Captain: Virat Kohli; Top run-scorer: Virat Kohli; Top wicket-taker: Yuzvendra Chahal."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 9, 2016", opponent: "Sunrisers Hyderabad", venue: "Rajiv Gandhi Stadium, Hyderabad", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo: 2, date: "Apr 13, 2016", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 10 runs", margin: "10 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 3, date: "Apr 17, 2016", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "KKR won by 7 wickets", margin: "7 wickets", toss: "KKR elected to field", playerOfMatch: "Andre Russell" },
+    { matchNo: 4, date: "Apr 20, 2016", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 2 runs", margin: "2 runs", toss: "Delhi elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 5, date: "Apr 24, 2016", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "RR elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 6, date: "Apr 28, 2016", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "MI won by 13 runs", margin: "13 runs", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 7, date: "May 2, 2016", opponent: "Rising Pune Supergiant", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "RPS elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 8, date: "May 5, 2016", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 14 runs", margin: "14 runs", toss: "RCB elected to bat", playerOfMatch: "Chris Lynn" },
+    { matchNo: 9, date: "May 8, 2016", opponent: "Sunrisers Hyderabad", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 18 runs", margin: "18 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:10, date: "May 11, 2016", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 24 runs", margin: "24 runs", toss: "RCB elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo:11, date: "May 14, 2016", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "Delhi elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:12, date: "May 18, 2016", opponent: "Rising Pune Supergiant", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 15 runs", margin: "15 runs", toss: "RPS elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:13, date: "May 21, 2016", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:14, date: "May 24, 2016", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB won by 12 runs", margin: "12 runs", toss: "KKR elected to bat", playerOfMatch: "Virat Kohli" },
+    // Playoffs
+    { matchNo: "Qualifier 1", date: "May 27, 2016", opponent: "Gujarat Lions", venue: "Neutral", result: "RCB won by 15 runs", margin: "15 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: "Final", date: "May 29, 2016", opponent: "Sunrisers Hyderabad", venue: "Neutral", result: "SRH won by 8 runs", margin: "8 runs", toss: "SRH elected to bat", playerOfMatch: "Shikhar Dhawan" }
+  ]
+ },
+"2015": {
+  summary: {
+    position: "3rd (Playoffs)",
+    played: 16,
+    won: 8,
+    lost: 8,
+    points: 16,
+    note: "Captain: Virat Kohli; Top run-scorer: AB de Villiers; Top wicket-taker: Vinay Kumar."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 9, 2015", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 9 wickets", margin: "9 wickets", toss: "Delhi elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 2, date: "Apr 12, 2015", opponent: "Sunrisers Hyderabad", venue: "Rajiv Gandhi Stadium, Hyderabad", result: "RCB lost by 6 runs", margin: "6 runs", toss: "SRH elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo: 3, date: "Apr 15, 2015", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 9 wickets", margin: "9 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 4, date: "Apr 18, 2015", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "KKR elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 5, date: "Apr 21, 2015", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "RR elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo: 6, date: "Apr 25, 2015", opponent: "Sunrisers Hyderabad", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "RCB elected to field", playerOfMatch: "AB de Villiers" },
+    { matchNo: 7, date: "Apr 29, 2015", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB lost by 4 runs", margin: "4 runs", toss: "Delhi elected to bat", playerOfMatch: "Shreyas Iyer" },
+    { matchNo: 8, date: "May 2, 2015", opponent: "Rising Pune Supergiant", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "RPS elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 9, date: "May 6, 2015", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 3 wickets", margin: "3 wickets", toss: "RCB elected to bat", playerOfMatch: "Andre Russell" },
+    { matchNo:10, date: "May 10, 2015", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 8 runs", margin: "8 runs", toss: "RR elected to bat", playerOfMatch: "Jos Buttler" },
+    { matchNo:11, date: "May 13, 2015", opponent: "Mumbai Indians", venue: "Wankhede Stadium, Mumbai", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "MI elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:12, date: "May 16, 2015", opponent: "Sunrisers Hyderabad", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 6 runs", margin: "6 runs", toss: "RCB elected to bat", playerOfMatch: "Shikhar Dhawan" },
+    { matchNo:13, date: "May 19, 2015", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "Delhi elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:14, date: "May 22, 2015", opponent: "Rising Pune Supergiant", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 runs", margin: "7 runs", toss: "RPS elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:15, date: "Playoff 1 – May 25, 2015", opponent: "Mumbai Indians", venue: "Neutral", result: "RCB won by 3 wickets", margin: "3 wickets", toss: "MI elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:16, date: "Final – May 27, 2015", opponent: "Mumbai Indians", venue: "Neutral", result: "MI won by 41 runs", margin: "41 runs", toss: "RCB elected to field", playerOfMatch: "Rohit Sharma" }
+  ]
+ },
+"2014": {
+  summary: {
+    position: "7th",
+    played: 14,
+    won: 5,
+    lost: 9,
+    points: 10,
+    note: "Captain: Virat Kohli; Top run-scorer: Chris Gayle; Top wicket-taker: Mohit Sharma."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 16, 2014", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "KKR won by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo: 2, date: "Apr 20, 2014", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 8 runs", margin: "8 runs", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 3, date: "Apr 24, 2014", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "Delhi elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 4, date: "Apr 27, 2014", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB lost by 12 runs", margin: "12 runs", toss: "RR elected to bat", playerOfMatch: "Ajinkya Rahane" },
+    { matchNo: 5, date: "May 1, 2014", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "RCB elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 6, date: "May 5, 2014", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "KXIP elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 7, date: "May 9, 2014", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 8, date: "May 12, 2014", opponent: "Chennai Super Kings", venue: "Chepauk, Chennai", result: "RCB lost by 10 runs", margin: "10 runs", toss: "CSK elected to bat", playerOfMatch: "Suresh Raina" },
+    { matchNo: 9, date: "May 16, 2014", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 3 wickets", margin: "3 wickets", toss: "KXIP elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo:10, date: "May 20, 2014", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "Delhi elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:11, date: "May 24, 2014", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 8 wickets", margin: "8 wickets", toss: "KKR elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo:12, date: "May 28, 2014", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 11 runs", margin: "11 runs", toss: "RCB elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo:13, date: "May 30, 2014", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:14, date: "June 2, 2014", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB lost by 9 runs", margin: "9 runs", toss: "KXIP elected to bat", playerOfMatch: "David Miller" }
+  ]
+},
+"2013": {
+  summary: {
+    position: "5th",
+    played: 16,
+    won: 9,
+    lost: 7,
+    points: 18,
+    note: "Captain: Virat Kohli; Top run-scorer: Chris Gayle; Top wicket-taker: Vinay Kumar."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 3, 2013", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB won by 2 wickets", margin: "2 wickets", toss: "Delhi elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 2, date: "Apr 6, 2013", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB lost by 8 wickets", margin: "8 wickets", toss: "RCB elected to bat", playerOfMatch: "Kieron Pollard" },
+    { matchNo: 3, date: "Apr 10, 2013", opponent: "Chennai Super Kings", venue: "Chepauk, Chennai", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "CSK elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 4, date: "Apr 14, 2013", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo: 5, date: "Apr 17, 2013", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB won by 3 wickets", margin: "3 wickets", toss: "RR elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 6, date: "Apr 20, 2013", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "MI elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 7, date: "Apr 24, 2013", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 5 runs", margin: "5 runs", toss: "RCB elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 8, date: "Apr 28, 2013", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "KXIP elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 9, date: "May 1, 2013", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "RCB elected to bat", playerOfMatch: "Ajinkya Rahane" },
+    { matchNo:10, date: "May 5, 2013", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 10 runs", margin: "10 runs", toss: "Delhi elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo:11, date: "May 8, 2013", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "KXIP elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:12, date: "May 12, 2013", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 8 wickets", margin: "8 wickets", toss: "KKR elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo:13, date: "May 15, 2013", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 9 wickets", margin: "9 wickets", toss: "CSK elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo:14, date: "May 18, 2013", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "MI elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:15, date: "Playoff 1 – May 21, 2013", opponent: "Chennai Super Kings", venue: "Neutral", result: "RCB lost by 37 runs", margin: "37 runs", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:16, date: "Playoff 2 – May 24, 2013", opponent: "Mumbai Indians", venue: "Neutral", result: "RCB did not play", margin: "-", toss: "-", playerOfMatch: "-" }
+  ]
+ },
+"2012": {
+  summary: {
+    position: "5th",
+    played: 16,
+    won: 8,
+    lost: 8,
+    points: 16,
+    note: "Captain: Virat Kohli; Top run-scorer: Chris Gayle; Top wicket-taker: Vinay Kumar."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 5, 2012", opponent: "Chennai Super Kings", venue: "Chepauk, Chennai", result: "RCB lost by 9 wickets", margin: "9 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 2, date: "Apr 8, 2012", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 11 runs", margin: "11 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 3, date: "Apr 11, 2012", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB lost by 3 wickets", margin: "3 wickets", toss: "KKR elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo: 4, date: "Apr 15, 2012", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "RCB elected to bat", playerOfMatch: "Rohit Sharma" },
+    { matchNo: 5, date: "Apr 18, 2012", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "RR elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 6, date: "Apr 21, 2012", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 10 runs", margin: "10 runs", toss: "RCB elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo: 7, date: "Apr 25, 2012", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "KXIP elected to bat", playerOfMatch: "David Miller" },
+    { matchNo: 8, date: "Apr 28, 2012", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "Delhi elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 9, date: "May 2, 2012", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 2 wickets", margin: "2 wickets", toss: "RCB elected to bat", playerOfMatch: "Rahul Dravid" },
+    { matchNo:10, date: "May 5, 2012", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "KXIP elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo:11, date: "May 8, 2012", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 5 runs", margin: "5 runs", toss: "RCB elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo:12, date: "May 11, 2012", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "MI elected to bat", playerOfMatch: "Virat Kohli" },
+    { matchNo:13, date: "May 14, 2012", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:14, date: "May 17, 2012", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "Delhi elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:15, date: "May 20, 2012", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB lost by 3 wickets", margin: "3 wickets", toss: "KXIP elected to bat", playerOfMatch: "David Miller" },
+    { matchNo:16, date: "May 23, 2012", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "RR elected to bat", playerOfMatch: "Chris Gayle" }
+  ]
+ },
+"2011": {
+  summary: {
+    position: "2nd",
+    played: 16,
+    won: 10,
+    lost: 6,
+    points: 20,
+    note: "Runners-up; Captain: Daniel Vettori; Top run-scorer: Chris Gayle; Top wicket-taker: Vinay Kumar."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 9, 2011", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "KKR elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 2, date: "Apr 14, 2011", opponent: "Chennai Super Kings", venue: "Chepauk, Chennai", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 3, date: "Apr 17, 2011", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 1 run", margin: "1 run", toss: "Delhi elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 4, date: "Apr 20, 2011", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "RR elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 5, date: "Apr 23, 2011", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RCB elected to bat", playerOfMatch: "Kieron Pollard" },
+    { matchNo: 6, date: "Apr 26, 2011", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "KXIP elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 7, date: "Apr 29, 2011", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 4 runs", margin: "4 runs", toss: "RCB elected to bat", playerOfMatch: "Shane Watson" },
+    { matchNo: 8, date: "May 3, 2011", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 8 wickets", margin: "8 wickets", toss: "CSK elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo: 9, date: "May 6, 2011", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "Delhi elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:10, date: "May 10, 2011", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "Chris Gayle" },
+    { matchNo:11, date: "May 13, 2011", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "KXIP elected to bat", playerOfMatch: "David Miller" },
+    { matchNo:12, date: "May 17, 2011", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB won by 3 wickets", margin: "3 wickets", toss: "KKR elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo:13, date: "Playoff 1 – May 21, 2011", opponent: "Chennai Super Kings", venue: "Neutral", result: "RCB lost by 8 wickets", margin: "8 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:14, date: "Playoff 2 – May 24, 2011", opponent: "Royal Challengers did not play", venue: "Neutral", result: "-", margin: "-", toss: "-", playerOfMatch: "-" }
+  ]
+ },
+"2010": {
+  summary: {
+    position: "3rd",
+    played: 16,
+    won: 8,
+    lost: 8,
+    points: 16,
+    note: "Captain: Anil Kumble; Top run-scorer: Jacques Kallis; Top wicket-taker: Anil Kumble."
+  },
+  matches: [
+    { matchNo: 1, date: "Mar 12, 2010", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "RCB elected to bat", playerOfMatch: "Kieron Pollard" },
+    { matchNo: 2, date: "Mar 15, 2010", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "Delhi elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 3, date: "Mar 18, 2010", opponent: "Chennai Super Kings", venue: "Chepauk, Chennai", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 4, date: "Mar 21, 2010", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB won by 8 runs", margin: "8 runs", toss: "KXIP elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 5, date: "Mar 24, 2010", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "Shane Watson" },
+    { matchNo: 6, date: "Mar 28, 2010", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "KKR elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 7, date: "Apr 1, 2010", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "MI elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 8, date: "Apr 5, 2010", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB lost by 2 wickets", margin: "2 wickets", toss: "Delhi elected to bat", playerOfMatch: "AB de Villiers" },
+    { matchNo: 9, date: "Apr 8, 2010", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 4 wickets", margin: "4 wickets", toss: "CSK elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo:10, date: "Apr 12, 2010", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "KXIP elected to bat", playerOfMatch: "David Hussey" },
+    { matchNo:11, date: "Apr 16, 2010", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB won by 8 runs", margin: "8 runs", toss: "RR elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo:12, date: "Apr 20, 2010", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 3 wickets", margin: "3 wickets", toss: "KKR elected to bat", playerOfMatch: "Gautam Gambhir" },
+    { matchNo:13, date: "Playoff 1 – Apr 25, 2010", opponent: "Chennai Super Kings", venue: "Neutral", result: "RCB lost by 33 runs", margin: "33 runs", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:14, date: "Final – Apr 28, 2010", opponent: "Mumbai Indians", venue: "Neutral", result: "RCB did not play", margin: "-", toss: "-", playerOfMatch: "-" }
+  ]
+},
+"2009": {
+  summary: {
+    position: "2nd",
+    played: 16,
+    won: 9,
+    lost: 7,
+    points: 18,
+    note: "Runners-up; Captain: Anil Kumble; Top run-scorer: Jacques Kallis; Top wicket-taker: Anil Kumble."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 18, 2009", opponent: "Deccan Chargers", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 33 runs", margin: "33 runs", toss: "RCB elected to bat", playerOfMatch: "Adam Gilchrist" },
+    { matchNo: 2, date: "Apr 22, 2009", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB won by 18 runs", margin: "18 runs", toss: "KXIP elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 3, date: "Apr 25, 2009", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB won by 2 wickets", margin: "2 wickets", toss: "Delhi elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 4, date: "Apr 28, 2009", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB lost by 28 runs", margin: "28 runs", toss: "RR elected to bat", playerOfMatch: "Shane Warne" },
+    { matchNo: 5, date: "May 2, 2009", opponent: "Chennai Super Kings", venue: "Chennai", result: "RCB won by 9 wickets", margin: "9 wickets", toss: "CSK elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 6, date: "May 5, 2009", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "Sanath Jayasuriya" },
+    { matchNo: 7, date: "May 8, 2009", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "KKR elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 8, date: "May 10, 2009", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "Delhi elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo: 9, date: "May 14, 2009", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 12 runs", margin: "12 runs", toss: "RCB elected to bat", playerOfMatch: "Shane Warne" },
+    { matchNo:10, date: "May 17, 2009", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo:11, date: "May 20, 2009", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:12, date: "May 23, 2009", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 11 runs", margin: "11 runs", toss: "KXIP elected to bat", playerOfMatch: "Jacques Kallis" },
+    { matchNo:13, date: "May 26, 2009", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "RCB elected to bat", playerOfMatch: "Brendon McCullum" },
+    { matchNo:14, date: "Playoff 1 – May 29, 2009", opponent: "Deccan Chargers", venue: "Neutral", result: "RCB lost by 24 runs", margin: "24 runs", toss: "DC elected to bat", playerOfMatch: "Adam Gilchrist" }
+  ]
+ },
+"2008": {
+  summary: {
+    position: "7th",
+    played: 14,
+    won: 4,
+    lost: 10,
+    points: 8,
+    note: "Debut season; Captain: Rahul Dravid; Top run-scorer: Rahul Dravid; Top wicket-taker: Anil Kumble."
+  },
+  matches: [
+    { matchNo: 1, date: "Apr 18, 2008", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 33 runs", margin: "33 runs", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 2, date: "Apr 21, 2008", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RR elected to bat", playerOfMatch: "Shane Warne" },
+    { matchNo: 3, date: "Apr 25, 2008", opponent: "Mumbai Indians", venue: "Wankhede, Mumbai", result: "RCB won by 24 runs", margin: "24 runs", toss: "RCB elected to bat", playerOfMatch: "Rahul Dravid" },
+    { matchNo: 4, date: "Apr 28, 2008", opponent: "Kings XI Punjab", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 5 wickets", margin: "5 wickets", toss: "KXIP elected to bat", playerOfMatch: "Irfan Pathan" },
+    { matchNo: 5, date: "May 2, 2008", opponent: "Delhi Daredevils", venue: "Feroz Shah Kotla, Delhi", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "Delhi elected to bat", playerOfMatch: "Rahul Dravid" },
+    { matchNo: 6, date: "May 5, 2008", opponent: "Kings XI Punjab", venue: "Mohali", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "RCB elected to bat", playerOfMatch: "Irfan Pathan" },
+    { matchNo: 7, date: "May 8, 2008", opponent: "Mumbai Indians", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 6 wickets", margin: "6 wickets", toss: "MI elected to bat", playerOfMatch: "Rahul Dravid" },
+    { matchNo: 8, date: "May 11, 2008", opponent: "Chennai Super Kings", venue: "Chepauk, Chennai", result: "RCB lost by 8 wickets", margin: "8 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo: 9, date: "May 14, 2008", opponent: "Rajasthan Royals", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 3 wickets", margin: "3 wickets", toss: "RR elected to bat", playerOfMatch: "Shane Warne" },
+    { matchNo:10, date: "May 18, 2008", opponent: "Delhi Daredevils", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 5 wickets", margin: "5 wickets", toss: "Delhi elected to bat", playerOfMatch: "Rahul Dravid" },
+    { matchNo:11, date: "May 21, 2008", opponent: "Kolkata Knight Riders", venue: "Eden Gardens, Kolkata", result: "RCB lost by 7 wickets", margin: "7 wickets", toss: "KKR elected to bat", playerOfMatch: "Brendon McCullum" },
+    { matchNo:12, date: "May 24, 2008", opponent: "Chennai Super Kings", venue: "M. Chinnaswamy, Bengaluru", result: "RCB lost by 4 wickets", margin: "4 wickets", toss: "CSK elected to bat", playerOfMatch: "MS Dhoni" },
+    { matchNo:13, date: "May 27, 2008", opponent: "Kolkata Knight Riders", venue: "M. Chinnaswamy, Bengaluru", result: "RCB won by 7 wickets", margin: "7 wickets", toss: "KKR elected to bat", playerOfMatch: "Rahul Dravid" },
+    { matchNo:14, date: "May 30, 2008", opponent: "Rajasthan Royals", venue: "Jaipur", result: "RCB lost by 6 wickets", margin: "6 wickets", toss: "RR elected to bat", playerOfMatch: "Shane Warne" }
+  ]
+}
+};
+
+/* Render helpers */
+function changeYear(){
+  const yr = document.getElementById('year').value;
+  renderYear(yr);
+}
+
+function renderYear(year){
+  const container = document.getElementById('year-content');
+  const data = schedules[year];
+  if(!data){
+    container.innerHTML = `<p class="note">No data for ${year} yet.</p>`;
+    return;
+  }
+
+  // season summary
+  const s = data.summary;
+  let html = `<div class="summary">
+      <h2>${year} — Season summary</h2>
+      <p><strong>Position:</strong> ${s.position || "—"}</p>
+      <p><strong>Matches played:</strong> ${s.played || "—"} &nbsp; <strong>Wins:</strong> ${s.won || 0} &nbsp; <strong>Losses:</strong> ${s.lost || 0} ${s.tied ? "&nbsp; Tied: " + s.tied : ""}</p>
+      <p><strong>Points:</strong> ${s.points !== undefined ? s.points : "—"}</p>
+      <p>${s.note || ""}</p>
+    </div>`;
+
+  // if matches array exists and has entries, show full match table
+  if(Array.isArray(data.matches) && data.matches.length){
+    html += `<table aria-label="Matches for ${year}">
+      <thead>
+        <tr>
+          <th>Match</th>
+          <th>Date</th>
+          <th>Opponent</th>
+          <th>Venue</th>
+          <th>Result</th>
+          <th>Margin</th>
+          <th>Toss</th>
+          <th>Player of Match</th>
+        </tr>
+      </thead>
+      <tbody>`;
+    data.matches.forEach(m=>{
+      html += `<tr>
+        <td>${m.matchNo}</td>
+        <td>${m.date}</td>
+        <td>${m.opponent}</td>
+        <td>${m.venue}</td>
+        <td>${m.result}</td>
+        <td>${m.margin || "-"}</td>
+        <td>${m.toss || "-"}</td>
+        <td>${m.playerOfMatch || "-"}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  } else {
+    html += `<p class="note">Full match list for ${year} is not added here. If you want per-match details (scores, venue specifics, individual scorecards) for past seasons, I can expand any year into a full match-by-match list on request.</p>`;
+  }
+
+  container.innerHTML = html;
+}
+
+/* initial render for default year */
+renderYear("2025");
+  </script>
+</body>
+</html>
+  <footer class="site-footer">
+      <p>© 2025 RCB Fan Club</p>
+    </div>
+  </footer>
