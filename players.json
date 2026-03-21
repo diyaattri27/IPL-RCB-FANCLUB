@@ -6,7 +6,7 @@
     "achievements": ["Orange Cap 2016", "Most runs in IPL history", "IPL 2025 Champion"],
     "bestMoments": ["973 runs in IPL 2016", "Match-winning 82* vs CSK 2023", "Key knocks in 2025 playoffs"],
     "stats": { "matches": 250, "runs": 7500, "average": 38.2, "strikeRate": 131.4, "hundreds": 7, "fifties": 52 },
-    "image": "images/virat kohli.jpg"
+    "image": "./images/virat kohli.jpg"
   },
   {
     "name": "Rajat Patidar",
@@ -15,7 +15,7 @@
     "achievements": ["RCB Captain 2025", "Player of the Match - IPL 2025 Final"],
     "bestMoments": ["112* vs LSG (2022 playoffs)", "90 vs MI 2025", "Captain’s knock in 2025 Final"],
     "stats": { "matches": 55, "runs": 1500, "average": 32.6, "strikeRate": 136.1, "hundreds": 1, "fifties": 11 },
-    "image": "images/rajat patidar.jpg"
+    "image": "./images/rajat patidar.jpg"
   },
   {
     "name": "Phil Salt",
@@ -24,7 +24,7 @@
     "achievements": ["RCB’s highest overseas run-scorer 2025"],
     "bestMoments": ["70(28) vs KKR 2025", "50+ opening stands with Kohli"],
     "stats": { "matches": 20, "runs": 600, "average": 30.0, "strikeRate": 158.2, "hundreds": 0, "fifties": 5 },
-    "image": "images/philt salt.jpg"
+    "image": "./images/philt salt.jpg"
   },
   {
     "name": "Jitesh Sharma",
@@ -33,7 +33,7 @@
     "achievements": ["India T20I debut 2023", "RCB’s finisher in 2025"],
     "bestMoments": ["35* off 15 vs CSK 2025", "Quick cameo in 2025 playoffs"],
     "stats": { "matches": 35, "runs": 650, "average": 25.0, "strikeRate": 148.5, "hundreds": 0, "fifties": 2 },
-    "image": "images/jitesh sharma.jpg"
+    "image": "./images/jitesh sharma.jpg"
   },
   {
     "name": "Mayank Agarwal",
@@ -42,7 +42,7 @@
     "achievements": ["Over 2300 IPL runs", "Former PBKS Captain"],
     "bestMoments": ["106 vs RR 2021", "52 vs SRH 2025"],
     "stats": { "matches": 120, "runs": 2600, "average": 23.8, "strikeRate": 128.7, "hundreds": 1, "fifties": 15 },
-    "image": "images/mayank agarwal.jpg"
+    "image": "./images/mayank agarwal.jpg"
   },
   {
     "name": "Liam Livingstone",
@@ -51,7 +51,7 @@
     "achievements": ["Fastest 50 for PBKS (17 balls)", "Over 100m six hitter"],
     "bestMoments": ["94* vs DC 2022", "Big sixes at Chinnaswamy"],
     "stats": { "matches": 45, "runs": 1100, "average": 28.0, "strikeRate": 153.4, "hundreds": 0, "fifties": 8 },
-    "image": "images/liam livingstone.jpg"
+    "image": "./images/liam livingstone.jpg"
   },
   {
     "name": "Krunal Pandya",
@@ -60,7 +60,7 @@
     "achievements": ["IPL 2017 winner with MI", "Over 1000 runs & 60+ wickets in IPL"],
     "bestMoments": ["4/14 vs SRH 2016 final", "Crucial all-round show vs RR 2025"],
     "stats": { "matches": 120, "runs": 1300, "average": 21.7, "strikeRate": 132.0, "wickets": 70, "bestBowling": "4/14" },
-    "image": "images/krunal pandya.jpg"
+    "image": "./images/krunal pandya.jpg"
   },
   {
     "name": "Tim David",
@@ -69,7 +69,7 @@
     "achievements": ["Match-winning cameos for MI & RCB"],
     "bestMoments": ["40* in 15 vs DC 2025", "Quickfire 25 in Qualifier"],
     "stats": { "matches": 45, "runs": 900, "average": 26.4, "strikeRate": 165.0, "hundreds": 0, "fifties": 4 },
-    "image": "images/tim david.jpg"
+    "image": "./images/tim david.jpg"
   },
   {
     "name": "Josh Hazlewood",
@@ -78,7 +78,7 @@
     "achievements": ["22 wickets in IPL 2025", "Australia World Cup winner"],
     "bestMoments": ["3/18 Eliminator 2025", "Early breakthroughs vs MI"],
     "stats": { "matches": 45, "wickets": 65, "average": 20.8, "economy": 7.5, "bestBowling": "4/25" },
-    "image": "images/josh hazelwood.jpg"
+    "image": "./images/josh hazelwood.jpg"
   },
   {
     "name": "Yash Dayal",
@@ -87,7 +87,7 @@
     "achievements": ["Emerging Player nominee 2025"],
     "bestMoments": ["Match-winning last over vs MI 2025", "3/27 vs KKR"],
     "stats": { "matches": 30, "wickets": 35, "average": 23.9, "economy": 8.3, "bestBowling": "3/27" },
-    "image": "images/yash dayal.jpg"
+    "image": "./images/yash dayal.jpg"
   },
   {
     "name": "Bhuvneshwar Kumar",
@@ -96,7 +96,7 @@
     "achievements": ["Purple Cap 2016, 2017", "Over 150 IPL wickets"],
     "bestMoments": ["3/15 vs RCB 2016", "Early breakthroughs in 2025 season"],
     "stats": { "matches": 160, "wickets": 170, "average": 24.3, "economy": 7.4, "bestBowling": "5/19" },
-    "image": "images/bhuvneshwar kumar.jpg"
+    "image": "./images/bhuvneshwar kumar.jpg"
   },
   {
     "name": "Nuwan Thushara",
@@ -105,7 +105,7 @@
     "achievements": ["Breakthrough overseas signing 2025"],
     "bestMoments": ["Defended 12 in last over vs CSK 2025"],
     "stats": { "matches": 15, "wickets": 18, "average": 21.1, "economy": 8.1, "bestBowling": "3/25" },
-    "image": "images/nuwan thushawa.jpg"
+    "image": "./images/nuwan thushawa.jpg"
   },
   {
     "name": "Abhinandan Singh",
@@ -114,7 +114,7 @@
     "achievements": ["RCB debut 2025"],
     "bestMoments": ["2 wickets on debut vs DC"],
     "stats": { "matches": 10, "wickets": 9, "average": 28.0, "economy": 8.7, "bestBowling": "2/22" },
-    "image": "images/abhinandan singh.jpg"
+    "image": "./images/abhinandan singh.jpg"
   },
   {
     "name": "Mohit Rathee",
@@ -123,7 +123,7 @@
     "achievements": ["IPL debut with RCB 2025"],
     "bestMoments": ["Wicket of Gill vs GT 2025"],
     "stats": { "matches": 12, "wickets": 8, "average": 30.5, "economy": 8.5, "bestBowling": "2/25" },
-    "image": "images/mohit rathee.jpg"
+    "image": "./images/mohit rathee.jpg"
   },
   {
     "name": "Manoj Bhandage",
@@ -141,7 +141,7 @@
     "achievements": ["Picked by RCB in 2025"],
     "bestMoments": ["Tight spell vs MI 2025"],
     "stats": { "matches": 12, "wickets": 11, "average": 26.4, "economy": 7.9, "bestBowling": "2/18" },
-    "image": "images/rasik.jpg"
+    "image": "./images/rasik.jpg"
   },
   {
     "name": "Suyash Sharma",
@@ -150,7 +150,7 @@
     "achievements": ["Emerging bowler in IPL", "Signed by RCB 2025"],
     "bestMoments": ["3 wickets on RCB debut vs PBKS 2025"],
     "stats": { "matches": 20, "wickets": 22, "average": 25.5, "economy": 8.4, "bestBowling": "3/21" },
-    "image": "images/suyansh sharma.jpg"
+    "image": "./images/suyansh sharma.jpg"
   },
   {
     "name": "Lungi Ngidi",
@@ -159,7 +159,7 @@
     "achievements": ["IPL winner with CSK 2018"],
     "bestMoments": ["3/21 vs PBKS 2025"],
     "stats": { "matches": 30, "wickets": 36, "average": 25.2, "economy": 8.2, "bestBowling": "4/19" },
-    "image": "images/lungisani ngidi.jpg"
+    "image": "./images/lungisani ngidi.jpg"
   },
   {
     "name": "Romario Shepherd",
@@ -168,7 +168,7 @@
     "achievements": ["CPL Star", "Match-winner in IPL 2025"],
     "bestMoments": ["30 runs in an over vs KKR 2025"],
     "stats": { "matches": 20, "runs": 350, "average": 23.3, "strikeRate": 164.0, "wickets": 15 },
-    "image": "images/romario shefard.jpg"
+    "image": "./images/romario shefard.jpg"
   },
   {
     "name": "Swapnil Singh",
@@ -177,7 +177,7 @@
     "achievements": ["RCB debut 2025"],
     "bestMoments": ["Economical spell vs CSK 2025"],
     "stats": { "matches": 7, "runs": 90, "average": 18.0, "strikeRate": 128.0, "wickets": 5 },
-    "image": "images/swapnil singh.jpg"
+    "image": "./images/swapnil singh.jpg"
   },
   {
     "name": "Swastik Chhikara",
@@ -186,7 +186,7 @@
     "achievements": ["Half-century on IPL debut"],
     "bestMoments": ["55 on debut IPL 2025"],
     "stats": { "matches": 5, "runs": 160, "average": 32.0, "strikeRate": 142.0, "hundreds": 0, "fifties": 1 },
-    "image": "images/swastik chikara.avif"
+    "image": "./images/swastik chikara.avif"
   },
   {
     "name": "Blessing Muzarabani",
@@ -195,7 +195,7 @@
     "achievements": ["Signed by RCB in 2025"],
     "bestMoments": ["2/20 vs SRH 2025"],
     "stats": { "matches": 6, "wickets": 7, "average": 24.0, "economy": 8.1, "bestBowling": "2/20" },
-    "image": "images/blessing muzarbani.jpg"
+    "image": "./images/blessing muzarbani.jpg"
   },
   {
     "name": "Tim Seifert",
@@ -204,6 +204,6 @@
     "achievements": ["Global T20 performer"],
     "bestMoments": ["Quickfire 35 vs RR 2025"],
     "stats": { "matches": 12, "runs": 220, "average": 22.0, "strikeRate": 140.0 },
-    "image": "images/tim seifer.jpg"
+    "image": "./images/tim seifer.jpg"
   }
 ]
